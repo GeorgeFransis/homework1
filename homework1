@@ -1,0 +1,111 @@
+import java.util.*;
+
+ class Student {
+     private String studentID; 
+     private String submittedAnswer; 
+
+     public Student(String studentID) { 
+         this.studentID = studentID; 
+     } 
+
+     public void submitAnswer(String answer) { 
+         this.submittedAnswer = answer; 
+     } 
+     
+     public String getStudentID() { 
+         return studentID; 
+     } 
+
+     public String getSubmittedAnswer() { 
+         return submittedAnswer; 
+     } 
+} 
+
+class Question {
+    private String questionText; 
+    private String questionType; 
+    private List<String> candidateAnswers; 
+
+    public Question(String questionText, String questionType, List<String> candidateAnswers) { 
+        this.questionText = questionText; 
+        this.questionType = questionType; 
+        this.candidateAnswers = candidateAnswers; 
+    } 
+   
+    public String getQuestionText() { 
+        return questionText; 
+    } 
+
+    public String getQuestionType() { 
+        return questionType; 
+    } 
+
+    public List<String> getCandidateAnswers() { 
+        return candidateAnswers; 
+    } 
+} 
+
+class VotingService { 
+    private Question question; 
+    private Map<String, String> submittedAnswers; 
+
+    public VotingService(Question question) { 
+        this.question = question;
+      submittedAnswers = new HashMap<>();
+    } 
+
+     public void acceptSubmission(Student student, String answer) {
+         // Ensure each student can submit only one answer
+          submittedAnswers.put(student.getStudentID(), answer); 
+    } 
+    
+     public void displayResults() { 
+         Map<String, Integer> answerCounts = new HashMap<>(); 
+         List<String> candidateAnswers = question.getCandidateAnswers(); 
+
+         // Initialize counts for each candidate answer 
+         for (String answer : candidateAnswers) { 
+              answerCounts.put(answer, 0); 
+     } 
+
+         // Count the submissions 
+         for (String submittedAnswer : submittedAnswers.values()) {
+              answerCounts.put(submittedAnswer, answerCounts.get(submittedAnswer) + 1); 
+     }
+
+         // Display the results 
+         for (String answer : candidateAnswers) {
+              System.out.println(answer + ": " + answerCounts.get(answer)); 
+         }
+     } 
+} 
+
+public class SimulationDriver { 
+    public static void main(String[] args) { 
+        // Create a question 
+        List<String> candidateAnswers = Arrays.asList("A", "B", "C", "D"); 
+        Question question = new Question("What is your answer?", "multiple-choice", candidateAnswers); 
+
+        // Create a voting service 
+        VotingService votingService = new VotingService(question); 
+
+        // Simulate students and their submissions 
+        Random random = new Random(); 
+        int numStudents = random.nextInt(50) + 1; 
+
+        for (int i = 0; i < numStudents; i++) { 
+        String studentID = "Student" + (i + 1); 
+        Student student = new Student(studentID); 
+
+        // Simulate random answer submissions 
+        String randomAnswer = candidateAnswers.get(random.nextInt(candidateAnswers.size())); 
+        student.submitAnswer(randomAnswer); 
+
+      // Accept student submission 
+     votingService.acceptSubmission(student, student.getSubmittedAnswer()); 
+    }
+
+    // Display the results 
+    votingService.displayResults();
+   } 
+}
